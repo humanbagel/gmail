@@ -1,9 +1,14 @@
 # Taken from https://github.com/oxos/gmail-oauth-thread-stats/blob/master/gmail_imap_extensions_compatibility.rb
 
 module GmailImapExtensions
+  
+  T_LPAR    = :LPAR
+  T_RPAR    = :RPAR
+  T_SPACE   = :SPACE
 
   def self.patch_net_imap_response_parser(klass = Net::IMAP::ResponseParser)
     klass.class_eval do
+      
       def msg_att
         match(T_LPAR)
         attr = {}
@@ -37,9 +42,9 @@ module GmailImapExtensions
           # Cargo-Cult code warning: # I have no idea why the regexp - just copying a pattern
           when /\A(?:X-GM-LABELS)\z/ni
             name, val = flags_data
-          when /\A(?:X-GM-MSGID)\z/ni 
+          when /\A(?:X-GM-MSGID)\z/ni
             name, val = uid_data
-          when /\A(?:X-GM-THRID)\z/ni 
+          when /\A(?:X-GM-THRID)\z/ni
             name, val = uid_data
           else
             parse_error("unknown attribute `%s'", token.value)
