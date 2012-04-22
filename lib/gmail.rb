@@ -10,7 +10,7 @@ end
 
 class Object
   def to_imap_date
-    Date.parse(to_s).strftime("%d-%B-%Y")
+    Time.parse(to_s).strftime("%d-%b-%Y %H:%M:%S %z")
   end
 end
 
