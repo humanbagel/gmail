@@ -194,6 +194,37 @@ module Gmail
         username.split('@').last
       end
       
+      def envelopes(uids)
+        if uids.blank?
+          return nil
+        end
+        response = conn.uid_fetch(uids, "ENVELOPE")
+        envelopes = response.map {|result|
+          result.attr["ENVELOPE"]
+        }
+      end
+      
+      def message_ids(uids)
+        if uids.blank?
+          return nil
+        end
+        response = conn.uid_fetch(uids, "(X-GM-MSGID)")
+        message_ids = response.map {|result|
+          result.attr["X-GM-MSGID"].to_s(16)
+        }
+      end
+      
+      def message_urls(uids)
+        if uids.blank?
+          return nil
+        end
+        msg_ids = message_ids(uids)
+        message_urls = msg_ids.map {|message|
+          message_hex_str = message.to_i(16).to_s
+          "http://mail.google.com/mail?account_id=#{username}&message_id=#{message_hex_str}&view=conv&extsrc=atom"
+        }
+      end
+      
       private
       
       def switch_to_mailbox(mailbox)
