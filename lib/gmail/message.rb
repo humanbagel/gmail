@@ -163,6 +163,22 @@ module Gmail
       })
     end
     alias_method :raw_message, :message
+    
+    def gthread_id
+      @thread_id = @gmail.conn.uid_fetch(uid, "X-GM-THRID")[0].attr["X-GM-THRID"]
+    end
+    
+    def gmsg_id
+      @messsage_id = @gmail.conn.uid_fetch(uid, "X-GM-MSGID")[0].attr["X-GM-MSGID"]
+    end
+    
+    def thread_url
+      "https://mail.google.com/mail/#all/" + gthread_id.to_s(16)
+    end
+    
+    def url
+      "http://mail.google.com/mail?account_id=#{@gmail.username}&message_id=#{gmsg_id.to_s(16)}&view=conv&extsrc=atom"
+    end
 
   end # Message
 end # Gmail
