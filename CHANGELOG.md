@@ -1,5 +1,9 @@
 # Gmail gem changelog
 
+## 0.4.1
+
+* Added XOAUTH2 authentication method, updated gmail_xaouth and mail versions
+
 ## 0.4.0
 
 * Added XOAUTH authentication method (Thanks Stefano Bernardi and Nicolas Fouché)
