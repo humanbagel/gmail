@@ -43,24 +43,28 @@ module Gmail
     def emails(*args, &block)
       args << :all if args.size == 0
 
-      if args.first.is_a?(Symbol) 
-        search = MAILBOX_ALIASES[args.shift].dup
+      if args.first.is_a?(Symbol)
+        target = args.shift
         opts = args.first.is_a?(Hash) ? args.first : {}
-        
-        opts[:after]      and search.concat ['SINCE', opts[:after].to_imap_date]
-        opts[:before]     and search.concat ['BEFORE', opts[:before].to_imap_date]
-        opts[:on]         and search.concat ['ON', opts[:on].to_imap_date]
-        opts[:from]       and search.concat ['FROM', opts[:from]]
-        opts[:to]         and search.concat ['TO', opts[:to]]
-        opts[:subject]    and search.concat ['SUBJECT', opts[:subject]]
-        opts[:label]      and search.concat ['LABEL', opts[:label]]
-        opts[:attachment] and search.concat ['HAS', 'attachment']
-        opts[:search]     and search.concat ['BODY', opts[:search]]
-        opts[:body]       and search.concat ['BODY', opts[:body]]
-        opts[:query]      and search.concat opts[:query]
+        if target == :after_seqno
+          search = "#{opts[:seqno]}:*"
+        else
+          search = MAILBOX_ALIASES[target].dup
+          opts[:after]      and search.concat ['SINCE', opts[:after].to_imap_date]
+          opts[:before]     and search.concat ['BEFORE', opts[:before].to_imap_date]
+          opts[:on]         and search.concat ['ON', opts[:on].to_imap_date]
+          opts[:from]       and search.concat ['FROM', opts[:from]]
+          opts[:to]         and search.concat ['TO', opts[:to]]
+          opts[:subject]    and search.concat ['SUBJECT', opts[:subject]]
+          opts[:label]      and search.concat ['LABEL', opts[:label]]
+          opts[:attachment] and search.concat ['HAS', 'attachment']
+          opts[:search]     and search.concat ['BODY', opts[:search]]
+          opts[:body]       and search.concat ['BODY', opts[:body]]
+          opts[:query]      and search.concat opts[:query]
+        end
 
         @gmail.mailbox(name) do
-          @gmail.conn.uid_search(search).collect do |uid| 
+          @gmail.conn.uid_search(search).drop(1).collect do |uid|
             message = (messages[uid] ||= Message.new(self, uid))
             block.call(message) if block_given?
             message
