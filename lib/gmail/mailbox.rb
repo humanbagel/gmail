@@ -46,8 +46,11 @@ module Gmail
       if args.first.is_a?(Symbol)
         target = args.shift
         opts = args.first.is_a?(Hash) ? args.first : {}
-        if target == :after_seqno
-          search = "#{opts[:seqno]}:*"
+        #@todo: maybe some other search types
+        if target == :after_uid
+          search = "UID #{opts[:uid]}:*"
+        elsif target == :after_gm_msgid
+          search = "X-GM-MSGID #{opts[:gm_msgid]}:*"
         else
           search = MAILBOX_ALIASES[target].dup
           opts[:after]      and search.concat ['SINCE', opts[:after].to_imap_date]
