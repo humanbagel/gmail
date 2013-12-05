@@ -67,7 +67,7 @@ module Gmail
         end
 
         @gmail.mailbox(name) do
-          @gmail.conn.uid_search(search).drop(1).collect do |uid|
+          @gmail.conn.uid_search(search).collect do |uid|
             message = (messages[uid] ||= Message.new(self, uid))
             block.call(message) if block_given?
             message
