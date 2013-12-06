@@ -49,8 +49,8 @@ module Gmail
         #@todo: maybe some other search types
         if target == :after_uid
           search = "UID #{opts[:uid]}:*"
-        elsif target == :after_gm_msgid
-          search = "X-GM-MSGID #{opts[:gm_msgid]}:*"
+        elsif [:gm_msgid, :after_gm_msgid].include?(target)
+          search = "X-GM-MSGID #{opts[:gm_msgid]}"
         else
           search = MAILBOX_ALIASES[target].dup
           opts[:after]      and search.concat ['SINCE', opts[:after].to_imap_date]
@@ -67,6 +67,11 @@ module Gmail
         end
 
         @gmail.mailbox(name) do
+          if target == :after_gm_msgid
+            uid = @gmail.conn.uid_search(search).first
+            return unless uid
+            search = "UID #{uid}:*"
+          end
           @gmail.conn.uid_search(search).collect do |uid|
             message = (messages[uid] ||= Message.new(self, uid))
             block.call(message) if block_given?
