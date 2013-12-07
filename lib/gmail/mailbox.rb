@@ -111,6 +111,12 @@ module Gmail
     def messages
       @messages ||= {}
     end
+
+    def untagged_responses
+      @gmail.tap do |client|
+        client.mailbox(name)
+      end.conn.responses
+    end
     
     def inspect
       "#<Gmail::Mailbox#{'0x%04x' % (object_id << 1)} name=#{external_name}>"
