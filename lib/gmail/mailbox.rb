@@ -112,6 +112,10 @@ module Gmail
       @messages ||= {}
     end
 
+    def status(attrs)
+      @gmail.conn.status(name, Array(attrs))
+    end
+
     def untagged_responses
       @gmail.tap do |client|
         client.mailbox(name)
