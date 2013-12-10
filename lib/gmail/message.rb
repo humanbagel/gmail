@@ -8,7 +8,7 @@ module Gmail
     attr_reader :uid
     
     def initialize(mailbox, uid)
-      @uid     = uid
+      @uid     = uid.to_i
       @mailbox = mailbox
       @gmail   = mailbox.instance_variable_get("@gmail") if mailbox
     end
