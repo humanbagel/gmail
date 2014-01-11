@@ -37,6 +37,8 @@ module GmailImapExtensions
             name, val = body_data
           when /\A(?:UID)\z/ni
             name, val = uid_data
+          when /\A(?:BODY(?:\.TEXT)?)\z/ni
+            name, val = body_type_text
       
           # Gmail extension additions.
           # Cargo-Cult code warning: # I have no idea why the regexp - just copying a pattern
