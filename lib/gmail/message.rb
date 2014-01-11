@@ -157,10 +157,13 @@ module Gmail
       }
     end
     
-    def message
-      @message ||= Mail.new(@gmail.mailbox(@mailbox.name) { 
-        @gmail.conn.uid_fetch(uid, "RFC822")[0].attr["RFC822"] # RFC822
-      })
+    def message(opts = {})
+      @message ||= begin
+        body_attr = opts.with_indifferent_access[:mark_read] ? "RFC822" : "BODY.PEEK[TEXT]" # by default, peek at the body text so it's not marked as read
+        Mail.new(@gmail.mailbox(@mailbox.name) { 
+          @gmail.conn.uid_fetch(uid, body_attr)[0].attr[body_attr]
+        })
+      end
     end
     alias_method :raw_message, :message
     
