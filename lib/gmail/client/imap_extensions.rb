@@ -33,7 +33,7 @@ module GmailImapExtensions
             name, val = rfc822_text
           when /\A(?:RFC822\.SIZE)\z/ni
             name, val = rfc822_size
-          when /\A(?:BODY(?:STRUCTURE)?)\z/ni
+          when /\A(?:BODY(?:STRUCTURE|\[\])?)\z/ni
             name, val = body_data
           when /\A(?:UID)\z/ni
             name, val = uid_data
